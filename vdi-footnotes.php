@@ -131,8 +131,8 @@ class VdiFootnotes {
 
   public function addSettingsPage() {
     add_options_page(
-      __('Easy Footnotes Settings', 'vdi-footnotes'),
-      __('Easy Footnotes', 'vdi-footnotes'),
+      __('VDI Footnotes Settings', 'vdi-footnotes'),
+      __('VDI Footnotes', 'vdi-footnotes'),
       'manage_options',
       'vdi-footnotes',
       array($this, 'renderSettingsPage')
@@ -151,6 +151,14 @@ class VdiFootnotes {
       __('Appearance Settings', 'vdi-footnotes'),
       null,
       'vdi-footnotes'
+    );
+
+    add_settings_field(
+      'footnotes_title',
+      __('Footnotes Section Title', 'vdi-footnotes'),
+      array($this, 'renderFootnotesTitleField'),
+      'vdi-footnotes',
+      'vdi_footnotes_appearance'
     );
 
     add_settings_field(
@@ -180,6 +188,7 @@ class VdiFootnotes {
 
   public function sanitizeOptions($input) {
     $sanitized = array();
+    $sanitized['footnotes_title'] = sanitize_text_field($input['footnotes_title']);
     $sanitized['show_numbers'] = isset($input['show_numbers']) ? 1 : 0;
     $sanitized['font_size'] = absint($input['font_size']);
     $sanitized['text_color'] = sanitize_hex_color($input['text_color']);
