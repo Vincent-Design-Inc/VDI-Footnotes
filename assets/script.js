@@ -1,75 +1,96 @@
 document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.footnote-ref a').forEach(function (link) {
+  let activeTooltip = null;
+  let originalFocusElement = null;
+
+  function closeTooltip() {
+    if (activeTooltip) {
+      activeTooltip.remove();
+      activeTooltip = null;
+      if (originalFocusElement) {
+        originalFocusElement.focus();
+        originalFocusElement = null;
+      }
+    }
+  }
+
+  function handleKeydown(e) {
+    if (!activeTooltip) return;
+
+    const focusable = Array.from(activeTooltip.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    ));
+    const firstFocusable = focusable[0];
+    const lastFocusable = focusable[focusable.length - 1];
+
+    if (e.key === 'Escape') {
+      closeTooltip();
+      return;
+    }
+
+    if (e.key === 'Tab') {
+      if (focusable.length === 0) {
+        e.preventDefault();
+        return;
+      }
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstFocusable) {
+          lastFocusable.focus();
+          e.preventDefault();
+        }
+      } else {
+        if (document.activeElement === lastFocusable) {
+          firstFocusable.focus();
+          e.preventDefault();
+        }
+      }
+    }
+  }
+
+  document.querySelectorAll('.footnote-ref a').forEach(link => {
     link.addEventListener('click', function (e) {
       e.preventDefault();
+      e.stopPropagation();
+      originalFocusElement = this;
+
+      if (activeTooltip) closeTooltip();
+
       const targetId = this.getAttribute('href');
       const footnoteContent = document.querySelector(targetId).innerHTML;
 
-      // Remove existing tooltips
-      document.querySelectorAll('.footnote-tooltip').forEach(t => t.remove());
-
-      // Create new tooltip
       const tooltip = document.createElement('div');
       tooltip.className = 'footnote-tooltip';
+      tooltip.setAttribute('role', 'dialog');
+      tooltip.setAttribute('aria-labelledby', 'tooltip-content');
       tooltip.innerHTML = `
-                <div class="tooltip-content">
+                <div class="tooltip-content" tabindex="0" id="tooltip-content">
                     ${footnoteContent}
-                    <button class="tooltip-close">&times;</button>
+                    <button class="tooltip-close" aria-label="Close Tooltip">&times;</button>
                 </div>
             `;
 
       document.body.appendChild(tooltip);
+      activeTooltip = tooltip;
 
-      // Position calculations
+      // Position tooltip
       const linkRect = this.getBoundingClientRect();
-      const tooltipHeight = tooltip.offsetHeight;
-      const viewportHeight = window.innerHeight;
+      tooltip.style.left = `${window.scrollX + linkRect.left}px`;
+      tooltip.style.top = `${window.scrollY + linkRect.top - tooltip.offsetHeight - 10}px`;
 
-      // Calculate available space
-      let topPos = window.scrollY + linkRect.top - tooltipHeight - 10;
-      if (topPos < 10 || (topPos + tooltipHeight) > viewportHeight) {
-        topPos = window.scrollY + linkRect.bottom + 10;
-      }
-
-      tooltip.style.cssText = `
-                position: absolute;
-                left: ${Math.min(linkRect.left, window.innerWidth - 300)}px;
-                top: ${topPos}px;
-                opacity: 0;
-                transition: opacity 0.3s ease;
-                pointer-events: none;
-            `;
-
-      // Fade in
-      setTimeout(() => {
-        tooltip.style.opacity = '1';
-        tooltip.style.pointerEvents = 'auto';
-      }, 50);
-
-      // Close button handler
+      // Set up close button
       const closeBtn = tooltip.querySelector('.tooltip-close');
-      closeBtn.addEventListener('click', function () {
-        tooltip.style.opacity = '0';
-        tooltip.style.pointerEvents = 'none';
-        setTimeout(() => tooltip.remove(), 300);
+      closeBtn.addEventListener('click', closeTooltip);
+
+      // Focus management
+      closeBtn.focus();
+
+      // Event listeners
+      document.addEventListener('keydown', handleKeydown);
+      document.addEventListener('click', function clickOutside(e) {
+        if (!tooltip.contains(e.target)) {
+          closeTooltip();
+        }
       });
-
-      // Close on outside click with proper timing
-      let clickListener;
-      const setupClickListener = () => {
-        clickListener = function (event) {
-          if (!tooltip.contains(event.target)) {
-            tooltip.style.opacity = '0';
-            tooltip.style.pointerEvents = 'none';
-            setTimeout(() => tooltip.remove(), 300);
-            document.removeEventListener('click', clickListener);
-          }
-        };
-        document.addEventListener('click', clickListener);
-      };
-
-      // Delay click listener to avoid immediate closure
-      setTimeout(setupClickListener, 50);
     });
   });
 });

@@ -31,31 +31,35 @@
 .footnote-tooltip {
   background: #fff;
   border: 1px solid #ddd;
-  padding: 1.5rem;
-  max-width: 300px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
   border-radius: 4px;
-  z-index: 10000;
-  transform: translateY(-10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  max-width: 400px;
+  outline: none;
+  padding: 10px;
+  position: absolute;
+  z-index: 100000;
 }
 
-.footnote-tooltip.active {
-  opacity: 1 !important;
-  transform: translateY(0);
+.tooltip-content:focus {
+  outline: 2px solid #005fcc;
+  outline-offset: 2px;
 }
 
 .tooltip-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
   background: none;
   border: none;
-  font-size: 1.4rem;
-  line-height: 1;
   cursor: pointer;
-  color: #666;
-  padding: 0 5px;
+  font-size: 1.4rem;
+  line-height: 0;
+  padding: 5px 0 8px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.tooltip-close:focus {
+  outline: 2px solid #005fcc;
+  outline-offset: 2px;
 }
 
 .tooltip-close:hover {
@@ -63,6 +67,25 @@
 }
 
 .tooltip-content {
-  position: relative;
   padding-right: 25px;
+  position: relative;
+}
+
+/* Add focus styles */
+.tooltip-close:focus,
+.footnote-ref a:focus {
+  outline: 2px solid #005fcc;
+  outline-offset: 2px;
+}
+
+/* Screen reader text */
+.screen-reader-text {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
 }
