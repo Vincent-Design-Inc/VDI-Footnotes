@@ -55,7 +55,7 @@ vdi-simple-footnotes/
 
 ## 🧪 Compatibility & Testing
 
-- Tested with WordPress 6.x and PHP 7.4+.
+- Tested with WordPress 6.x and PHP 8.3.
 - Works with both classic and block-based themes.
 - Compatible with Twig and Blade (Sage) themes that properly use `the_content()` via `ob_get_clean()`.
 - Safe to use with most common plugins – avoids global conflicts.
@@ -64,7 +64,7 @@ vdi-simple-footnotes/
 
 - **Singleton Design Pattern:** All plugin logic is encapsulated in the `VdiFootnotes` class to ensure a single instance.
 - **Customizable Inline Styles:** Dynamically generates inline CSS based on user settings for font size and text color.
-- **Shortcode and Template Tag Support:** Use `[footnote]` for inline footnotes or the `vdiFootnotesDisplay()` function to display footnotes in templates.
+- **Shortcode and Template Tag Support:** Use `[footnote]` for inline footnotes and the `[show_footnotes]` shortcode to display footnotes in templates.
 - **Secure Output:** Uses `wp_kses_post()` and `esc_attr()` for sanitization and escaping.
 - **Expandable Tooltips:** JavaScript-powered tooltips provide a smooth user experience.
 
