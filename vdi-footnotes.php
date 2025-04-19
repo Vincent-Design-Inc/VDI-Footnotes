@@ -99,12 +99,16 @@ class VdiFootnotes {
   }
 
   public function appendFootnotes($content) {
-    if (empty($this->footnotes) || !is_main_query() || !in_the_loop()) {
-        return $content;
+    if (empty($this->footnotes) || !is_main_query() || !in_the_loop()) { return $content; }
+
+    if (!empty($this->options['footnotes_title'])) {
+      $title = esc_html__($this->options['footnotes_title'], 'vdi-footnotes');
+    } else {
+      $title = __('Footnotes', 'vdi-footnotes');
     }
 
     $footnotes_html = '<div class="vdi-footnotes-container">';
-    $footnotes_html .= '<h3>' . esc_html__('Footnotes', 'vdi-footnotes') . '</h3>';
+    $footnotes_html .= '<h3>' . $title . '</h3>';
     $footnotes_html .= '<ol class="vdi-footnotes-list">';
 
     foreach ($this->footnotes as $id => $note) {
@@ -185,7 +189,7 @@ class VdiFootnotes {
   public function renderSettingsPage() {
     ?>
     <div class="wrap">
-      <h1><?php esc_html_e('Easy Footnotes Settings', 'vdi-footnotes'); ?></h1>
+      <h1><?php esc_html_e('VDI Footnotes Settings', 'vdi-footnotes'); ?></h1>
       <form method="post" action="options.php">
         <?php
         settings_fields('vdi_footnotes_options_group');
@@ -195,6 +199,11 @@ class VdiFootnotes {
       </form>
     </div>
     <?php
+  }
+
+  public function renderFootnotesTitleField() {
+    $value = isset($this->options['footnotes_title']) ? $this->options['footnotes_title'] : __('Footnotes', 'vdi-footnotes');
+    echo '<input type="text" name="vdi_footnotes_options[footnotes_title]" value="' . esc_attr($value) . '" placeholder="' . esc_attr__('Footnotes Section Title', 'vdi-footnotes') . '">';
   }
 
   public function renderShowNumbersField() {
@@ -222,9 +231,13 @@ class VdiFootnotes {
 // Initialize the plugin
 VdiFootnotes::getInstance();
 
-// Template tag for use in themes
+// Template tag shortcode for use in themes
 if (!function_exists('vdiFootnotesDisplay')) {
   function vdiFootnotesDisplay() {
     echo VdiFootnotes::getFootnotesContent();
   }
+
+  add_shortcode('show_footnotes', function() {
+    return VdiFootnotes::getFootnotesContent();
+  });
 }

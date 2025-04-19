@@ -1,66 +1,72 @@
 # VDI Simple Footnotes
 
-VDI Simple Footnotes is a lightweight WordPress plugin that allows you to add footnotes to your posts and pages using a simple shortcode. It displays them inline and at the bottom of the content, with expand/collapse behavior inspired by [James R. Meyer’s method](https://www.jamesrmeyer.com/otherstuff/easy-footnotes-for-web-pages).
+VDI Simple Footnotes is a lightweight WordPress plugin that allows you to add footnotes to your posts and pages using a simple shortcode. It displays them inline and at the bottom of the content, with expand/collapse behavior for better readability.
 
 ## 📦 Features
 
-- Shortcode-based footnotes: `[footnote note="This is a footnote."]`
-- Supports links and HTML inside notes.
-- Auto-generated footnote container at the bottom of the page.
-- Expand/collapse highlighting behavior for smooth navigation.
-- Settings page to customize font size, color, and toggle footnote numbers.
-- Compatible with themes using Twig or Blade (Sage).
-- Works in all modern browsers and screen sizes.
-- Clean and minimal markup, no front-end bloat.
+- **Shortcode-based footnotes:** Use `[footnote]` to add footnotes inline with your content.
+- **Customizable appearance:** Adjust font size, text color, and toggle footnote numbers via the settings page.
+- **Auto-generated footnote container:** Automatically appends an ordered list of footnotes at the bottom of the post or page.
+- **Expand/collapse tooltips:** Footnotes are displayed in tooltips when clicked, with smooth fade-in/out animations.
+- **Settings page:** Easily configure appearance options in the WordPress admin under **Settings → VDI Footnotes**.
+- **Twig/Blade compatibility:** Works seamlessly with themes using Twig or Blade templating engines.
+- **Minimal front-end footprint:** Clean and lightweight markup with no unnecessary bloat.
+- **Safe and secure:** Uses WordPress APIs for sanitization and escaping to ensure secure output.
 
 ## 🚀 Installation
 
 1. Upload the plugin to your `wp-content/plugins/` directory or install via the Plugins screen in WordPress.
 2. Activate the plugin from the Plugins menu.
-3. Use the `[footnote note="..."]` shortcode in your posts and pages.
-4. Go to **Settings → VDI Footnotes** to customize appearance options.
+3. Go to **Settings → VDI Footnotes** to customize appearance options.
 
 ## 🧩 Usage
 
-To add a footnote:
+### Adding a Footnote
+
+To add a footnote, use the `[footnote]` shortcode in your content:
 
 ```wordpress
-This is a sentence with a footnote.[footnote note="This is the actual footnote content."]
+This is a sentence with a footnote.[footnote]This is the actual footnote content.[/footnote]
 ```
 
-Footnotes will appear at the end of the post/page in an ordered list, with clickable links and smooth scroll-to behavior.
-Optional Settings
+Footnotes will appear as superscript numbers in the content and as an ordered list at the bottom of the post/page. Clicking on a footnote number will display the content in a tooltip.
 
-You can adjust the following options in the WordPress admin under Settings → VDI Footnotes:
+Add the `[show_footnotes]` shortcode to your content where you want the footnotes to appear, generally at the bottom of the page.
 
-- **Font Size:** Custom font size for the footnote list.
-- **Font Color:** Custom color for footnote text.
-- **Show Numbers in Content:** Toggle whether the superscript number or an asterisk appears in the main text.
+### Optional Settings
+
+You can adjust the following options in the WordPress admin under **Settings → VDI Footnotes**:
+
+- **Footnotes Section Title:** Customize the title of the footnotes section displayed at the bottom of the page.
+- **Show Numbers in Content:** Toggle whether superscript numbers or an asterisk appears in the main text.
+- **Font Size:** Set a custom font size (in pixels) for the footnote list.
+- **Text Color:** Choose a custom color for footnote text.
 
 ## 📁 File Structure
 
 ```plaintext
 vdi-simple-footnotes/
 ├── assets/
-│   ├── style.css
-│   └── script.js
-├── vdi-simple-footnotes.php
-└── README.md
+│   ├── style.css       # Styles for footnotes and tooltips
+│   └── script.js       # JavaScript for tooltip functionality
+├── vdi-footnotes.php   # Main plugin file
+└── README.md           # Plugin documentation
 ```
 
 ## 🧪 Compatibility & Testing
 
 - Tested with WordPress 6.x and PHP 7.4+.
-- Works with classic themes and block-based themes.
+- Works with both classic and block-based themes.
 - Compatible with Twig and Blade (Sage) themes that properly use `the_content()` via `ob_get_clean()`.
-- Safe with most common plugins – avoids global conflicts.
+- Safe to use with most common plugins – avoids global conflicts.
 
 ## 🛠 Developer Notes
 
-- All plugin logic is encapsulated in a singleton class.
-- Uses core WordPress APIs and follows best practices.
-- Uses `wp_enqueue_style()` and `wp_enqueue_script()` to avoid redundant asset loading.
-- `wp_kses_post()` and `esc_attr()` are used for safe output handling.
+- **Singleton Design Pattern:** All plugin logic is encapsulated in the `VdiFootnotes` class to ensure a single instance.
+- **Customizable Inline Styles:** Dynamically generates inline CSS based on user settings for font size and text color.
+- **Shortcode and Template Tag Support:** Use `[footnote]` for inline footnotes or the `vdiFootnotesDisplay()` function to display footnotes in templates.
+- **Secure Output:** Uses `wp_kses_post()` and `esc_attr()` for sanitization and escaping.
+- **Expandable Tooltips:** JavaScript-powered tooltips provide a smooth user experience.
 
 ## 📜 License
 
