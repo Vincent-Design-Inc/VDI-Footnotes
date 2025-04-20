@@ -3,13 +3,17 @@
 Plugin Name: VDI Simple Footnotes
 Description: A lightweight footnote system with shortcode support and customizable appearance.
 Version: 1.0.0
+Plugin URI: https://git.keithsolomon.net/Solo_Web_Works/Footnotes-Plugin
+Update URI:
+Tested up to:
 Author: Keith Solomon
 Author URI: https://vincentdesign.ca
 Text Domain: vdi-footnotes
-Domain Path: /languages
 */
 
 if (!defined('ABSPATH')) { exit; }
+
+require_once plugin_dir_path(__FILE__) . 'includes/GitHubUpdater.php';
 
 class VdiFootnotes {
   private static $instance;
@@ -250,3 +254,10 @@ if (!function_exists('vdiFootnotesDisplay')) {
     return VdiFootnotes::getFootnotesContent();
   });
 }
+
+$gitHubUpdater = new GitHubUpdater(plugin_dir_path(__FILE__).'vdi-footnotes.php');
+$gitHubUpdater->setChangelog('CHANGELOG.md');
+$gitHubUpdater->setPluginIcon('assets/icon-256x256.png');
+$gitHubUpdater->setPluginBannerSmall('assets/banner-sm.jpg');
+$gitHubUpdater->setPluginBannerLarge('assets/banner-lg.jpg');
+$gitHubUpdater->add();

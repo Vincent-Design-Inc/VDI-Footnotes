@@ -47,10 +47,16 @@ You can adjust the following options in the WordPress admin under **Settings →
 ```plaintext
 vdi-simple-footnotes/
 ├── assets/
-│   ├── style.css       # Styles for footnotes and tooltips
-│   └── script.js       # JavaScript for tooltip functionality
-├── vdi-footnotes.php   # Main plugin file
-└── README.md           # Plugin documentation
+│   ├── banner-lg.jpg     # Large banner for Github updater script
+│   ├── banner-sm.jpg     # Small banner for Github updater script
+│   ├── icon-256x256.png  # Icon for Github updater script
+│   ├── script.js         # Styles for footnotes and tooltips
+│   └── style.css         # JavaScript for tooltip functionality
+├── includes/
+│   └── GithubUpdater.php # Class to support updating the plugin from a Github repo
+├── CHANGELOG.md          # Plugin changelog
+├── README.md             # Plugin documentation
+└── vdi-footnotes.php     # Main plugin file
 ```
 
 ## 🧪 Compatibility & Testing
