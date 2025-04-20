@@ -68,7 +68,6 @@ vdi-simple-footnotes/
 
 ## 🛠 Developer Notes
 
-- **Singleton Design Pattern:** All plugin logic is encapsulated in the `VdiFootnotes` class to ensure a single instance.
 - **Customizable Inline Styles:** Dynamically generates inline CSS based on user settings for font size and text color.
 - **Shortcode and Template Tag Support:** Use `[footnote]` for inline footnotes and the `[show_footnotes]` shortcode to display footnotes in templates.
 - **Secure Output:** Uses `wp_kses_post()` and `esc_attr()` for sanitization and escaping.
