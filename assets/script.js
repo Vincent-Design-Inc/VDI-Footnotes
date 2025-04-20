@@ -38,11 +38,9 @@ document.addEventListener('DOMContentLoaded', function () {
           lastFocusable.focus();
           e.preventDefault();
         }
-      } else {
-        if (document.activeElement === lastFocusable) {
-          firstFocusable.focus();
-          e.preventDefault();
-        }
+      } else if (document.activeElement === lastFocusable) {
+        firstFocusable.focus();
+        e.preventDefault();
       }
     }
   }
