@@ -1,0 +1,91 @@
+.vdi-footnotes-container {
+  border-top: 1px solid #ddd;
+  margin-top: 2em;
+  padding-top: 1em;
+}
+
+.footnote-ref {
+  font-size: 0.8em;
+  margin-left: 2px;
+  vertical-align: super;
+}
+
+.footnote-ref.hidden-number a {
+  color: transparent;
+  font-size: 0;
+}
+
+.footnote-ref a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.vdi-footnotes-list { padding-left: 1.5em; }
+
+.footnote-back {
+  margin-left: 0.5em;
+  text-decoration: none;
+}
+
+/* Tooltip styles */
+.footnote-tooltip {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  max-width: 400px;
+  outline: none;
+  padding: 10px;
+  position: absolute;
+  z-index: 100000;
+}
+
+.tooltip-content:focus {
+  outline: 2px solid #005fcc;
+  outline-offset: 2px;
+}
+
+.tooltip-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 0;
+  padding: 5px 0 8px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.tooltip-close:focus {
+  outline: 2px solid #005fcc;
+  outline-offset: 2px;
+}
+
+.tooltip-close:hover {
+  color: #333;
+}
+
+.tooltip-content {
+  padding-right: 25px;
+  position: relative;
+}
+
+/* Add focus styles */
+.tooltip-close:focus,
+.footnote-ref a:focus {
+  outline: 2px solid #005fcc;
+  outline-offset: 2px;
+}
+
+/* Screen reader text */
+.screen-reader-text {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
