@@ -11,6 +11,8 @@ Author URI: https://vincentdesign.ca
 Text Domain: vdi-footnotes
 */
 
+namespace VDIFootnotes;
+
 if (!defined('ABSPATH')) { exit; }
 
 require_once plugin_dir_path(__FILE__) . 'includes/GitHubUpdater.php';
@@ -18,8 +20,15 @@ require_once plugin_dir_path(__FILE__) . 'includes/GitHubUpdater.php';
 class VdiFootnotes {
   private static $instance;
   private $footnotes = array();
+  private $tempFootnotes = array(); // Temporary storage
   private $counter = 1;
   private $options;
+
+  private function consoleLog( $data ) {
+    echo '<script>';
+    echo 'console.log(' . json_encode( $data ) . ')';
+    echo '</script>';
+  }
 
   public static function getInstance() {
     if (!self::$instance) {
@@ -33,8 +42,12 @@ class VdiFootnotes {
     add_action('wp_enqueue_scripts', array($this, 'enqueueAssets'));
     add_action('admin_menu', array($this, 'addSettingsPage'));
     add_action('admin_init', array($this, 'registerSettings'));
-    add_shortcode('footnote', array($this, 'footnoteShortcode'));
-    add_filter('the_content', array($this, 'appendFootnotes'));
+    add_shortcode('efn_note', array($this, 'footnoteShortcode'));
+    // Reset for each post
+    add_action('the_post', [$this, 'reset_for_new_post']);
+
+    // Lower priority to ensure all footnotes are collected
+    add_filter('the_content', [$this, 'appendFootnotes'], 99);
   }
 
   public function init() {
@@ -88,13 +101,13 @@ class VdiFootnotes {
     }
 
     $note_id = $this->counter++;
-    $this->footnotes[$note_id] = wp_kses_post($content);
+    $this->tempFootnotes[$note_id] = wp_kses_post($content);
 
     $show_numbers = isset($this->options['show_numbers']) ? $this->options['show_numbers'] : 1;
     $number_class = $show_numbers ? '' : ' hidden-number';
 
     return sprintf(
-        '<sup class="footnote-ref%s"><a href="#fn%d" id="ref%d">%d</a></sup>',
+        '<sup class="footnote-ref-link footnote-ref%s"><a href="#fn%d" id="ref%d">%d</a></sup>',
         $number_class,
         $note_id,
         $note_id,
@@ -103,7 +116,15 @@ class VdiFootnotes {
   }
 
   public function appendFootnotes($content) {
-    if (empty($this->footnotes) || !is_main_query() || !in_the_loop()) { return $content; }
+    if ($this->processed || !is_main_query() || !in_the_loop()) { return $content; }
+
+    // Commit temporary footnotes
+    if (!empty($this->tempFootnotes)) {
+      $this->footnotes = $this->tempFootnotes;
+      $this->tempFootnotes = array();
+    }
+
+    if (empty($this->footnotes)) { return $content; }
 
     if (!empty($this->options['footnotes_title'])) {
       $title = esc_html__($this->options['footnotes_title'], 'vdi-footnotes');
@@ -115,6 +136,7 @@ class VdiFootnotes {
     $footnotes_html .= '<h3>' . $title . '</h3>';
     $footnotes_html .= '<ol class="vdi-footnotes-list">';
 
+    $this->consoleLog('$footnotes: '.print_r($this->footnotes,true));
     foreach ($this->footnotes as $id => $note) {
       $footnotes_html .= sprintf(
         '<li id="fn%d">%s <a href="#ref%d" class="footnote-back">↩</a></li>',
@@ -130,7 +152,15 @@ class VdiFootnotes {
     $this->footnotes = array();
     $this->counter = 1;
 
+    $this->processed = true;
     return $content . $footnotes_html;
+  }
+
+  public function reset_for_new_post() {
+      $this->footnotes = array();
+      $this->tempFootnotes = array();
+      $this->counter = 1;
+      $this->processed = false;
   }
 
   public function addSettingsPage() {

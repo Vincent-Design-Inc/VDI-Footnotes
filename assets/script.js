@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (activeTooltip) closeTooltip();
 
       const targetId = this.getAttribute('href');
+      console.log(targetId);
       const footnoteContent = document.querySelector(targetId).innerHTML;
 
       const tooltip = document.createElement('div');
