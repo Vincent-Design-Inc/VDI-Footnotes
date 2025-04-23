@@ -1,95 +1,72 @@
-document.addEventListener('DOMContentLoaded', function () {
-  let activeTooltip = null;
-  let originalFocusElement = null;
+// script.js
 
-  function closeTooltip() {
-    if (activeTooltip) {
-      activeTooltip.remove();
-      activeTooltip = null;
-      if (originalFocusElement) {
-        originalFocusElement.focus();
-        originalFocusElement = null;
-      }
-    }
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  const refs = document.querySelectorAll('.footnote-ref a');
 
-  function handleKeydown(e) {
-    if (!activeTooltip) return;
+  refs.forEach(ref => {
+    const container = ref.closest('.footnote-ref');
+    const content = container?.dataset.note?.trim();
+    if (!content) return;
 
-    const focusable = Array.from(activeTooltip.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    ));
-    const firstFocusable = focusable[0];
-    const lastFocusable = focusable[focusable.length - 1];
+    // Create tooltip
+    const tooltip = document.createElement('div');
+    tooltip.className = 'footnote-tooltip';
+    tooltip.setAttribute('role', 'dialog');
+    tooltip.setAttribute('aria-modal', 'true');
+    tooltip.setAttribute('tabindex', '-1');
 
-    if (e.key === 'Escape') {
-      closeTooltip();
-      return;
-    }
+    const close = document.createElement('button');
+    close.className = 'tooltip-close';
+    close.innerHTML = '&times;';
+    close.setAttribute('aria-label', 'Close footnote');
 
-    if (e.key === 'Tab') {
-      if (focusable.length === 0) {
-        e.preventDefault();
-        return;
-      }
+    close.addEventListener('click', () => tooltip.remove());
+    close.addEventListener('keydown', e => {
+      if (e.key === 'Escape') tooltip.remove();
+    });
 
-      if (e.shiftKey) {
-        if (document.activeElement === firstFocusable) {
-          lastFocusable.focus();
-          e.preventDefault();
-        }
-      } else if (document.activeElement === lastFocusable) {
-        firstFocusable.focus();
-        e.preventDefault();
-      }
-    }
-  }
+    const tooltipContent = document.createElement('div');
+    tooltipContent.className = 'tooltip-content';
+    tooltipContent.innerHTML = content;
 
-  document.querySelectorAll('.footnote-ref a').forEach(link => {
-    link.addEventListener('click', function (e) {
+    tooltip.appendChild(close);
+    tooltip.appendChild(tooltipContent);
+
+    // Append once to avoid re-adding
+    document.body.appendChild(tooltip);
+    tooltip.remove();
+
+    function openTooltip(e) {
       e.preventDefault();
-      e.stopPropagation();
-      originalFocusElement = this;
 
-      if (activeTooltip) closeTooltip();
+      document.querySelectorAll('.footnote-tooltip').forEach(t => t.remove());
 
-      const targetId = this.getAttribute('href');
-      console.log(targetId);
-      const footnoteContent = document.querySelector(targetId).innerHTML;
-
-      const tooltip = document.createElement('div');
-      tooltip.className = 'footnote-tooltip';
-      tooltip.setAttribute('role', 'dialog');
-      tooltip.setAttribute('aria-labelledby', 'tooltip-content');
-      tooltip.innerHTML = `
-                <div class="tooltip-content" tabindex="0" id="tooltip-content">
-                    ${footnoteContent}
-                    <button class="tooltip-close" aria-label="Close Tooltip">&times;</button>
-                </div>
-            `;
+      const rect = ref.getBoundingClientRect();
+      tooltip.style.top = `${window.scrollY + rect.bottom + 5}px`;
+      tooltip.style.left = `${window.scrollX + rect.left}px`;
 
       document.body.appendChild(tooltip);
-      activeTooltip = tooltip;
+      tooltip.focus();
 
-      // Position tooltip
-      const linkRect = this.getBoundingClientRect();
-      tooltip.style.left = `${window.scrollX + linkRect.left}px`;
-      tooltip.style.top = `${window.scrollY + linkRect.top - tooltip.offsetHeight - 10}px`;
-
-      // Set up close button
-      const closeBtn = tooltip.querySelector('.tooltip-close');
-      closeBtn.addEventListener('click', closeTooltip);
-
-      // Focus management
-      closeBtn.focus();
-
-      // Event listeners
-      document.addEventListener('keydown', handleKeydown);
-      document.addEventListener('click', function clickOutside(e) {
-        if (!tooltip.contains(e.target)) {
-          closeTooltip();
+      // Outside click handler
+      const handleClickOutside = event => {
+        if (!tooltip.contains(event.target) && event.target !== ref) {
+          tooltip.remove();
+          document.removeEventListener('click', handleClickOutside);
         }
-      });
+      };
+      setTimeout(() => document.addEventListener('click', handleClickOutside));
+    }
+
+    ref.addEventListener('click', openTooltip);
+    ref.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        openTooltip(e);
+      }
     });
+
+    ref.setAttribute('tabindex', '0');
+    ref.setAttribute('role', 'button');
+    ref.setAttribute('aria-haspopup', 'dialog');
   });
 });
