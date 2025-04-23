@@ -1,9 +1,19 @@
 <?php
-/**
- * Plugin Name: VDI Simple Footnotes
- */
+  /*
+  Plugin Name: VDI Simple Footnotes
+  Description: A lightweight footnote system with shortcode support and customizable appearance.
+  Version: 1.0.0
+  Plugin URI: https://github.com/Vincent-Design-Inc/VDI-Footnotes
+  Update URI: https://github.com/Vincent-Design-Inc/VDI-Footnotes
+  Tested up to:
+  Author: Keith Solomon
+  Author URI: https://vincentdesign.ca
+  Text Domain: vdi-footnotes
+  */
 
-class VDISimpleFootnotes {
+  namespace VDIFootnotes;
+
+  class VDISimpleFootnotes {
   private $footnotes = [];
   private $footnoteCount = 1;
   private $listRendered = false;
