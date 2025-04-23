@@ -6,10 +6,16 @@
 class VDISimpleFootnotes {
   private $footnotes = [];
   private $footnoteCount = 1;
+  private $listRendered = false;
 
   public function __construct() {
     add_shortcode('efn_note', [$this, 'renderFootnote']);
-    add_filter('the_content', [$this, 'resetFootnoteCount'], 5); // Reset before rendering starts
+    add_shortcode('efn_list', function() {
+      $this->listRendered = true;
+      return $this->getFootnotesHtml();
+    });
+
+    add_filter('the_content', [$this, 'resetFootnoteCount'], 5);
     add_filter('the_content', [$this, 'appendFootnotes'], 99);
     add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
   }
@@ -17,10 +23,12 @@ class VDISimpleFootnotes {
   public function resetFootnoteCount($content) {
     $this->footnotes = [];
     $this->footnoteCount = 1;
+    $this->listRendered = false;
     return $content;
   }
 
   public function renderFootnote($atts, $content = '') {
+    $atts = $atts ?: [];
     $content = trim($content);
 
     $refId = 'fnref-' . $this->footnoteCount;
@@ -42,7 +50,12 @@ class VDISimpleFootnotes {
   }
 
   public function appendFootnotes($content) {
-    if (empty($this->footnotes)) { return $content; }
+    if (empty($this->footnotes) || $this->listRendered) { return $content; }
+    return $content . $this->getFootnotesHtml();
+  }
+
+  public function getFootnotesHtml() {
+    if (empty($this->footnotes)) { return ''; }
 
     $output = '<div class="vdi-footnotes-container" role="doc-endnotes">';
     $output .= '<strong id="footnote-label" class="screen-reader-text">Footnotes</strong>';
@@ -57,7 +70,7 @@ class VDISimpleFootnotes {
 
     $output .= '</ol></div>';
 
-    return $content . $output;
+    return $output;
   }
 
   public function enqueueAssets() {
@@ -66,4 +79,11 @@ class VDISimpleFootnotes {
   }
 }
 
-new VDISimpleFootnotes();
+$GLOBALS['vdi_simple_footnotes'] = new VDISimpleFootnotes();
+
+function vdiOutputFootnotes() {
+  if (!empty($GLOBALS['vdi_simple_footnotes'])) {
+    $GLOBALS['vdi_simple_footnotes']->listRendered = true;
+    echo $GLOBALS['vdi_simple_footnotes']->getFootnotesHtml();
+  }
+}
