@@ -26,7 +26,7 @@
     });
 
     add_filter('the_content', [$this, 'resetFootnoteCount'], 5);
-    // add_filter('the_content', [$this, 'appendFootnotes'], 99);
+    add_filter('the_content', [$this, 'appendFootnotes'], 99);
     add_action('wp_enqueue_scripts', [$this, 'enqueueAssets']);
   }
 
