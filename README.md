@@ -4,7 +4,7 @@ VDI Simple Footnotes is a lightweight WordPress plugin that allows you to add fo
 
 ## 📦 Features
 
-- **Shortcode-based footnotes:** Use `[footnote]` to add footnotes inline with your content.
+- **Shortcode-based footnotes:** Use `[efn_note]` to add footnotes inline with your content.
 - **Customizable appearance:** Adjust font size, text color, and toggle footnote numbers via the settings page.
 - **Auto-generated footnote container:** Automatically appends an ordered list of footnotes at the bottom of the post or page.
 - **Expand/collapse tooltips:** Footnotes are displayed in tooltips when clicked, with smooth fade-in/out animations.
@@ -23,10 +23,10 @@ VDI Simple Footnotes is a lightweight WordPress plugin that allows you to add fo
 
 ### Adding a Footnote
 
-To add a footnote, use the `[footnote]` shortcode in your content:
+To add a footnote, use the `[efn_note]` shortcode in your content:
 
 ```wordpress
-This is a sentence with a footnote.[footnote]This is the actual footnote content.[/footnote]
+This is a sentence with a footnote.[efn_note]This is the actual footnote content.[/efn_note]
 ```
 
 Footnotes will appear as superscript numbers in the content and as an ordered list at the bottom of the post/page. Clicking on a footnote number will display the content in a tooltip.
